@@ -1,1 +1,43 @@
-# new script yml CI CD
+name : Deploy to Github Pages
+on: 
+  push:
+    branches:
+      -master
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build and Deploy
+      run:
+          cp *.html  *.css  docs/
+
+    - name: Config Git
+      run:  |
+          git config --global user.email "jerome.boungou@gmail.com"
+          git config --global user.name "jboungou"
+          
+    - name: Commit and Push Changes
+      run:  |
+          # Change to the  'docs' directory
+          cd docs
+
+          # Initialize a Git repository (if not already initialized)
+          git init
+
+          #Add all files
+          git add .
+
+          # Commit Changes 
+          git commit -m "Deploy to GitHub Pages"
+
+          # Push to the 'gh-pages' branch on Github
+          git push  --force "https://${{ secrets.GITHUB_TOKEN }}@github.com/${{  github.repository  }}.git"  master:gh-pages
+
+    - name: Cleanup
+      run:  |
+          rm -rf docs
+        
