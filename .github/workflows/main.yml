@@ -1,0 +1,55 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Change this to your main branch name
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build
+      run: |
+        # Add your build commands here
+        # For example, if you need to minify CSS or optimize images, include those commands.
+        # If you don't have additional build steps, you can remove this entire 'Build' stage.
+
+    - name: Deploy to GitHub Pages
+      run: |
+        # Create a 'docs' directory to host your web app (if it doesn't exist).
+        mkdir -p docs
+
+        # Copy your HTML and CSS files to the 'docs' directory.
+        cp *.html *.css docs/
+
+    - name: Configure Git
+      run: |
+        git config --global user.email "your-email@example.com"
+        git config --global user.name "Your Name"
+
+    - name: Commit and Push Changes
+      run: |
+        # Change to the 'docs' directory.
+        cd docs
+
+        # Initialize a Git repository (if not already initialized).
+        git init
+
+        # Add all files.
+        git add .
+
+        # Commit changes.
+        git commit -m "Deploy to GitHub Pages"
+
+        # Push to the 'gh-pages' branch on GitHub.
+        git push --force "https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" master:gh-pages
+
+    - name: Cleanup
+      run: |
+        # Remove the 'docs' directory to avoid duplication.
+        rm -rf docs
